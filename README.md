@@ -8,6 +8,7 @@ AWS Infrastructure
     ```
 
 2. Creat Networking Resources:
+
     Default properties:
     ```bash
     aws cloudformation create-stack --stack-name vpc-2 --template-body file://csye6225-infra.json
