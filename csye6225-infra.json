@@ -690,7 +690,7 @@
         },
         "S3BucketName": {
             "Description" : "S3BucketName",
-            "Default": "csye6225.dev.chunjunhu.me",
+            "Default": "csye6225.demo.chunjunhu.me",
             "Type": "String"
         },
         "DBUsername": {
