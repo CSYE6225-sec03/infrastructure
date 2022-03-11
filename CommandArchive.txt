@@ -26,10 +26,21 @@ create a public route in the public route table created above with destination C
 
 
 use aws cloudFormation:
-aws cloudformation create-stack --stack-name vpc-2 --template-body file://csye6225-infra.json --parameters ParameterKey=VPCNAME,ParameterValue="myVPC-2" ParameterKey=VPCCIDR,ParameterValue="10.0.0.0/16" ParameterKey=IGWNAME,ParameterValue="myIGW-2" ParameterKey=PUBLICROUTETABLENAME,ParameterValue="myPRT-2" ParameterKey=subnetNAME01,ParameterValue="subnet1-2" ParameterKey=subnetRegionNAME01,ParameterValue="subnet1" ParameterKey=SubnetCIDR1,ParameterValue="10.0.1.0/24" ParameterKey=subnetNAME02,ParameterValue="subnet2-2" ParameterKey=subnetRegionNAME02,ParameterValue="subnet2" ParameterKey=SubnetCIDR2,ParameterValue="10.0.2.0/24" ParameterKey=subnetNAME03,ParameterValue="subnet3-2" ParameterKey=subnetRegionNAME03,ParameterValue="subnet3" ParameterKey=SubnetCIDR3,ParameterValue="10.0.3.0/24"
+aws cloudformation create-stack --stack-name vpc-2 --template-body file://csye6225-infra.json --parameters ParameterKey=AMINAME,ParameterValue="ami-0b417b29c9b10fdf6" ParameterKey=S3BucketName,ParameterValue="csye6225.dev.chunjunhu.me" ParameterKey=DBPassword,ParameterValue="****" ParameterKey=DBUsername,ParameterValue="csye6225" ParameterKey=VPCNAME,ParameterValue="myVPC-2" ParameterKey=VPCCIDR,ParameterValue="10.0.0.0/16" ParameterKey=IGWNAME,ParameterValue="myIGW-2" ParameterKey=PUBLICROUTETABLENAME,ParameterValue="myPRT-2" ParameterKey=subnetNAME01,ParameterValue="subnet1-2" ParameterKey=SubnetCIDR1,ParameterValue="10.0.1.0/24" ParameterKey=subnetNAME02,ParameterValue="subnet2-2" ParameterKey=SubnetCIDR2,ParameterValue="10.0.2.0/24" ParameterKey=subnetNAME03,ParameterValue="subnet3-2" ParameterKey=SubnetCIDR3,ParameterValue="10.0.3.0/24"
+
+--capabilities CAPABILITY_NAMED_IAM
 
 delete aws cloudForamtion stack:
 aws cloudformation delete-stack --stack-name my-stack
+
+Create AMI by packer:
+packer build -var-file vars.json ami.json
+
+Create Key Pair：
+aws ec2 create-key-pair --key-name KeyPair01 --key-type rsa --query "KeyMaterial" --output text > KeyPair01.pem
+
+Empty bucket:
+aws s3 rm s3://csye6225.dev.chunjunhu.me --recursive
 
 GITHUB:
 

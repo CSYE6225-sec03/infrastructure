@@ -2,45 +2,6 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description" : "Create a stack for VPC which has 3 subnets for different region and attach subsets to route table, route with destination CIDR block 0.0.0.0/0 and internet gateway as the target, No hardcoded values",
     
-    
-    "Mappings": {
-        "VPCSubnetZones": {
-            "us-east-1": {
-                "subnet1": "us-east-1a",
-                "subnet2": "us-east-1b",
-                "subnet3": "us-east-1c"
-            },
-            "us-east-2": {
-                "subnet1": "us-east-2a",
-                "subnet2": "us-east-2b",
-                "subnet3": "us-east-2c"
-            },
-            "us-west-1"      : { 
-                "subnet1": "us-west-1a",
-                "subnet2": "us-west-1b",
-                "subnet3": "us-west-1c"
-            },
-
-            "us-west-2"      : { 
-                "subnet1": "us-west-2a",
-                "subnet2": "us-west-2b",
-                "subnet3": "us-west-2c"
-            },
-            "eu-west-1"      : {
-                "subnet1": "eu-west-1a",
-                "subnet2": "eu-west-1b",
-                "subnet3": "eu-west-1c"
-            },
-            "sa-east-1"      : {
-                "subnet1": "sa-east-1a",
-                "subnet2": "sa-east-1b",
-                "subnet3": "sa-east-1c"
-            }
-        }
-    },
-    
-    
-    
     "Resources": {
         "VPC": {
             "Type": "AWS::EC2::VPC",
@@ -59,10 +20,13 @@
                 "CidrBlock": {
                     "Ref" : "SubnetCIDR1"
                 },
-                "AvailabilityZone": {
-                    "Fn::FindInMap": ["VPCSubnetZones", {
-                        "Ref": "AWS::Region"
-                    }, {"Ref": "subnetRegionNAME01"}]
+                "AvailabilityZone" : {
+                    "Fn::Select" : [ 
+                      "0", 
+                      { 
+                        "Fn::GetAZs" : "" 
+                      } 
+                    ]
                 },
 		        "MapPublicIpOnLaunch" : "true",
                 "Tags": [
@@ -82,10 +46,13 @@
                 "CidrBlock": {
                     "Ref" : "SubnetCIDR2"
                 },
-                "AvailabilityZone": {
-                    "Fn::FindInMap": ["VPCSubnetZones", {
-                        "Ref": "AWS::Region"
-                    }, {"Ref": "subnetRegionNAME02"}]
+                "AvailabilityZone" : {
+                    "Fn::Select" : [ 
+                      "1", 
+                      { 
+                        "Fn::GetAZs" : "" 
+                      } 
+                    ]
                 },
                 "MapPublicIpOnLaunch" : "true",
                 "Tags": [
@@ -105,16 +72,97 @@
                 "CidrBlock": {
                     "Ref" : "SubnetCIDR3"
                 },
-                "AvailabilityZone": {
-                    "Fn::FindInMap": ["VPCSubnetZones", {
-                        "Ref": "AWS::Region"
-                    }, {"Ref": "subnetRegionNAME03"}]
+                "AvailabilityZone" : {
+                    "Fn::Select" : [ 
+                      "2", 
+                      { 
+                        "Fn::GetAZs" : "" 
+                      } 
+                    ]
                 },
                 "MapPublicIpOnLaunch" : "true",
                 "Tags": [
                     {
                         "Key": "Name",
                         "Value": {"Ref": "subnetNAME03"}
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            }
+        },
+        "PublicSubnet4": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref" : "SubnetCIDR4"
+                },
+                "AvailabilityZone" : {
+                    "Fn::Select" : [ 
+                      "0", 
+                      { 
+                        "Fn::GetAZs" : "" 
+                      } 
+                    ]
+                },
+		        "MapPublicIpOnLaunch" : "false",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "subnet4"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            }
+        },
+        "PublicSubnet5": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref" : "SubnetCIDR5"
+                },
+                "AvailabilityZone" : {
+                    "Fn::Select" : [ 
+                      "1", 
+                      { 
+                        "Fn::GetAZs" : "" 
+                      } 
+                    ]
+                },
+		        "MapPublicIpOnLaunch" : "false",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "subnet5"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            }
+        },
+        "PublicSubnet6": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref" : "SubnetCIDR6"
+                },
+                "AvailabilityZone" : {
+                    "Fn::Select" : [ 
+                      "2", 
+                      { 
+                        "Fn::GetAZs" : "" 
+                      } 
+                    ]
+                },
+		        "MapPublicIpOnLaunch" : "false",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "subnet6"
                     }
                 ],
                 "VpcId": {
@@ -148,6 +196,7 @@
                 }
             }
         },
+
         "EC2SrtaSubnet1": {
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "Properties": {
@@ -181,6 +230,7 @@
                 }
             }
         },
+
         "PublicInternetRoute": {
             "Type": "AWS::EC2::Route",
             "Properties": {
@@ -192,9 +242,339 @@
                     "Ref": "InternetGateway"
                 }
             }
+        },
+
+
+
+
+
+        "PrivateRouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+		        "Tags":[{"Key" : "Name", "Value": { "Ref": "PRIVATEROUTETABLENAME" }}],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            }
+        },
+
+
+        "EC2SrtaSubnet4": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "RouteTableId": { "Ref" : "PrivateRouteTable" },
+                "SubnetId": {
+                    "Ref": "PublicSubnet4"
+                }
+            }
+        },
+        "EC2SrtaSubnet5": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "RouteTableId": { "Ref" : "PrivateRouteTable" },
+                "SubnetId": {
+                    "Ref": "PublicSubnet5"
+                }
+            }
+        },
+        "EC2SrtaSubnet6": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "RouteTableId": { "Ref" : "PrivateRouteTable" },
+                "SubnetId": {
+                    "Ref": "PublicSubnet6"
+                }
+            }
+        },
+
+
+
+
+
+
+
+
+
+
+        "InstanceSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+               "GroupDescription" : "Create application security group",
+               "VpcId" : {"Ref" : "VPC"},
+               "SecurityGroupIngress" : [
+                    { "IpProtocol" : "tcp", "FromPort" : 22, "ToPort" : 22, "CidrIp" : "0.0.0.0/0" },
+                    { "IpProtocol" : "tcp", "FromPort" : 80, "ToPort" : 80, "CidrIp" : "0.0.0.0/0" },
+                    { "IpProtocol" : "tcp", "FromPort" : 443, "ToPort" : 443, "CidrIp" : "0.0.0.0/0" },
+                    { "IpProtocol" : "tcp", "FromPort" : 8000, "ToPort" : 8000, "CidrIp" : "0.0.0.0/0" }
+                ],
+                "Tags":[{"Key" : "Name", "Value": "application"}]
+            }
+        },
+
+        "MyEC2Instance" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "ImageId" : {"Ref" : "AMINAME"},
+                "SubnetId": {
+                    "Ref": "PublicSubnet3"
+                },
+                "KeyName" : "KeyPair01",
+                "InstanceType" : "t2.micro",
+                "SecurityGroupIds" : [{"Ref" : "InstanceSecurityGroup"}],
+                "BlockDeviceMappings" : [
+                    {
+                        "DeviceName" : "/dev/xvda",
+                        "Ebs" : {
+                            "VolumeType" : "gp2",
+                            "DeleteOnTermination" : "true",
+                            "VolumeSize" : "20"
+                        }
+                    }
+                ],
+                "IamInstanceProfile": { "Ref": "RootInstanceProfile" },
+                "UserData": { 
+                    "Fn::Base64": { 
+                        "Fn::Join": ["\n",
+                            [
+                                "#!/bin/bash",
+                                "cd /home/ec2-user",
+                                {"Fn::Sub": "sudo echo 'hostname=${MyDB.Endpoint.Address}' >> 1.txt"},
+                                {"Fn::Sub": "sudo echo 'Dbname=${DBUsername}' >> 1.txt"},
+                                {"Fn::Sub": "sudo echo 'PWD=${DBPassword}' >> 1.txt"},
+                                {"Fn::Sub": "sudo echo 'BucketName=${S3BucketName}' >> 1.txt"},
+                                "cd /home/ec2-user/webservice/DjangoAPI",
+                                {"Fn::Sub": "sudo echo 'a=1' >> 2.txt"},
+                                "sudo python3 manage.py makemigrations",
+                                "sudo python3 manage.py migrate",
+                                "cd /home/ec2-user",
+                                "sudo cp webservice.service /usr/lib/systemd/system",
+                                "sudo systemctl daemon-reload",
+                                "sudo systemctl enable webservice.service",
+                                "sudo systemctl start webservice.service"
+
+                                
+
+                            ]
+                        ]
+                    }
+                },
+                "Tags":[{"Key" : "Name", "Value": "MyEC2Instance"}]
+            }
+        },
+
+
+
+        "S3Bucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketName": { "Ref": "S3BucketName" },
+                "AccessControl": "Private",
+                "BucketEncryption" : {
+                    "ServerSideEncryptionConfiguration": [
+                        {
+                            "ServerSideEncryptionByDefault": {
+                                "SSEAlgorithm": "AES256"
+                            }
+                        }
+                    ]
+                },
+                "LifecycleConfiguration": {
+                    "Rules": [
+                        {
+                            "Id": "Rule for assignment5",
+                            "Status": "Enabled",
+                            "Transitions": [
+                                {
+                                    "TransitionInDays": 30,
+                                    "StorageClass": "STANDARD_IA"
+                                }
+                            ],
+                            "ExpirationInDays": 365
+                        }
+                    ]
+                }
+            }
+        },
+
+        "DbSecurityByEC2SecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Security group for RDS DB Instance.",
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "SecurityGroupIngress": [{
+
+                    "IpProtocol": "tcp",
+                    "FromPort": 3306,
+                    "ToPort": 3306,
+                    "SourceSecurityGroupId": {
+                        "Ref": "InstanceSecurityGroup"
+                    }
+                }],
+                "Tags":[{"Key" : "Name", "Value": "database"}]
+            }
+        },
+
+        "RDSDBParameterGroup": {
+            "Type": "AWS::RDS::DBParameterGroup",
+            "Properties": {
+                "Description": "CloudFormation Sample MySQL Parameter Group",
+                "Family": "mysql8.0"
+            }
+        },
+
+        "myDBSubnetGroup": {
+            "Type": "AWS::RDS::DBSubnetGroup",
+            "Properties": {
+                "DBSubnetGroupDescription": "description",
+                "SubnetIds": [
+                    {"Ref" : "PublicSubnet4"},
+                    {"Ref": "PublicSubnet5"}
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "mySubnetGroup"
+                    }
+                ]
+            }
+        },
+
+
+
+
+        
+        "MyDB": {
+
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "DBInstanceIdentifier": "csye6225",
+                "DBName": "csye6225",
+                "DBInstanceClass": "db.t3.micro",
+                "MultiAZ":"false",
+                "Engine": "MySQL",
+                "EngineVersion": "8.0.16",
+                "MasterUsername": {
+                    "Ref": "DBUsername"
+                },
+                "AllocatedStorage": {
+                    "Ref": "DBAllocatedStorage"
+                },
+                "MasterUserPassword": {
+                    "Ref": "DBPassword"
+                },
+                "DBSubnetGroupName" : {
+                    "Ref": "myDBSubnetGroup"
+                },
+                "PubliclyAccessible" : "false",
+                "VPCSecurityGroups": [
+                    {
+                        "Ref": "DbSecurityByEC2SecurityGroup"
+                    }
+                ],
+                "DBParameterGroupName":{
+                    "Ref": "RDSDBParameterGroup"
+                }
+            }
+        },
+
+
+
+        "RootRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+               "AssumeRolePolicyDocument": {
+                  "Version" : "2012-10-17",
+                  "Statement": [ {
+                     "Effect": "Allow",
+                     "Principal": {
+                        "Service": [ "ec2.amazonaws.com" ]
+                     },
+                     "Action": [ "sts:AssumeRole" ]
+                  } ]
+               },
+               "RoleName": "EC2-CSYE6225",
+               "Path": "/"
+            }
+        },
+        "RolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+               "PolicyName": "WebAppS3",
+               "PolicyDocument": {
+                  "Version" : "2012-10-17",
+                  "Statement": [ {
+                     "Effect": "Allow",
+                     "Action": [
+                        "s3:PutObject",
+                        "s3:GetObjectAcl",
+                        "s3:GetObject",
+                        "s3:ListBucket",
+                        "s3:DeleteObject",
+                        "s3:PutObjectAcl",
+                        "s3:DeleteBucket"
+                    ],
+                     "Resource": [
+                        { "Fn::Sub" : 
+                            [ "${ARN}", 
+                                { "ARN": 
+                                    { "Fn::GetAtt": 
+                                        [
+                                            "S3Bucket",
+                                            "Arn"
+                                        ]
+                                    }
+                                } 
+                            ] 
+                        },
+                        { "Fn::Sub" : 
+                            [ "${ARN}/*", 
+                                { "ARN": 
+                                    { "Fn::GetAtt": 
+                                        [
+                                            "S3Bucket",
+                                            "Arn"
+                                        ]
+                                    }
+                                } 
+                            ] 
+                        }
+                     ]
+                  } ]
+               },
+               "Roles": [ {
+                  "Ref": "RootRole"
+               } ]
+            }
+        },
+        "RootInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+               "Path": "/",
+               "Roles": [ {
+                  "Ref": "RootRole"
+               } ]
+            }
         }
+
+
+
+
+
+
+
     },
     "Parameters": {
+
+        
+
+        "AMINAME": {
+            "Description" : "The AMI name",
+            "Type": "String",
+            "Default": "ami-03849e0419fbf9845"
+  
+        },
 
         "VPCNAME": {
           "Description" : "The stack name",
@@ -222,25 +602,6 @@
   
         },
 
-        "subnetRegionNAME01": {
-            "Description" : "The subnet region name",
-            "Type": "String",
-            "Default": "subnet1"
-  
-        },
-        "subnetRegionNAME02": {
-            "Description" : "The subnet region name",
-            "Type": "String",
-            "Default": "subnet2"
-  
-        },
-        "subnetRegionNAME03": {
-            "Description" : "The subnet region name",
-            "Type": "String",
-            "Default": "subnet3"
-  
-        },
-
         "IGWNAME": {
           "Description" : "The Internet Gateway name",
           "Type": "String",
@@ -251,6 +612,11 @@
           "Description" : "The Public Route Table name",
           "Type": "String",
           "Default": "myPRT"
+        },
+        "PRIVATEROUTETABLENAME": {
+            "Description" : "The Private Route Table name",
+            "Type": "String",
+            "Default": "myPrivateRT"
         },
 
         "VPCCIDR": {
@@ -282,6 +648,60 @@
             "MinLength": "9",
             "MaxLength": "18",
             "Default": "10.0.3.0/24"
+        },
+        "SubnetCIDR4": {
+            "Type": "String",
+            "Description": "IP Address range for the subnet connected VPC",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "10.0.4.0/24"
+        },
+        "SubnetCIDR5": {
+            "Type": "String",
+            "Description": "IP Address range for the subnet connected VPC",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "10.0.5.0/24"
+        },
+        "SubnetCIDR6": {
+            "Type": "String",
+            "Description": "IP Address range for the subnet connected VPC",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "10.0.6.0/24"
+        },
+        "DBAllocatedStorage": {
+            "Default": "20",
+            "Description": "The size of the database (GiB)",
+            "Type": "Number",
+            "MinValue": "20",
+            "MaxValue": "65536",
+            "ConstraintDescription": "must be between 20 and 65536 GiB."
+        },
+        "DBPassword": {
+            "Default": "He59kop24",
+            "NoEcho": "true",
+            "Description": "Password MySQL database access",
+            "Type": "String",
+            "MinLength": "8",
+            "MaxLength": "41",
+            "AllowedPattern": "[a-zA-Z0-9]*",
+            "ConstraintDescription": "must contain only alphanumeric characters."
+        },
+        "S3BucketName": {
+            "Description" : "S3BucketName",
+            "Default": "csye6225.dev.chunjunhu.me",
+            "Type": "String"
+        },
+        "DBUsername": {
+            "Default": "csye6225",
+            "NoEcho": "true",
+            "Description": "Username for MySQL database access",
+            "Type": "String",
+            "MinLength": "1",
+            "MaxLength": "16",
+            "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+            "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
         }
     }
 }
