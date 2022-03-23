@@ -27,7 +27,7 @@ create a public route in the public route table created above with destination C
 	aws ec2 create-route --route-table-id rtb-03ce0d4f072fa45c3 --destination-cidr-block 0.0.0.0/0 --gateway-id igw-0d744833b7fca752c
 
 use aws cloudFormation:
-aws cloudformation create-stack --stack-name vpc-2 --template-body file://csye6225-infra.json --parameters ParameterKey=AMINAME,ParameterValue="ami-0b417b29c9b10fdf6" ParameterKey=S3BucketName,ParameterValue="csye6225.dev.chunjunhu.me" ParameterKey=DBPassword,ParameterValue="****" ParameterKey=DBUsername,ParameterValue="csye6225" ParameterKey=VPCNAME,ParameterValue="myVPC-2" ParameterKey=VPCCIDR,ParameterValue="10.0.0.0/16" ParameterKey=IGWNAME,ParameterValue="myIGW-2" ParameterKey=PUBLICROUTETABLENAME,ParameterValue="myPRT-2" ParameterKey=subnetNAME01,ParameterValue="subnet1-2" ParameterKey=SubnetCIDR1,ParameterValue="10.0.1.0/24" ParameterKey=subnetNAME02,ParameterValue="subnet2-2" ParameterKey=SubnetCIDR2,ParameterValue="10.0.2.0/24" ParameterKey=subnetNAME03,ParameterValue="subnet3-2" ParameterKey=SubnetCIDR3,ParameterValue="10.0.3.0/24"
+aws cloudformation create-stack --stack-name vpc-2 --template-body file://csye6225-infra.json --parameters ParameterKey=AMINAME,ParameterValue="ami-07b06f5f45dcc727b" ParameterKey=S3BucketName,ParameterValue="csye6225.dev.chunjunhu.me" ParameterKey=HostedZoneResource,ParameterValue="dev.chunjunhu.me." ParameterKey=DBPassword,ParameterValue="****" ParameterKey=DBUsername,ParameterValue="csye6225" ParameterKey=VPCNAME,ParameterValue="myVPC-2" ParameterKey=VPCCIDR,ParameterValue="10.0.0.0/16" ParameterKey=IGWNAME,ParameterValue="myIGW-2" ParameterKey=PUBLICROUTETABLENAME,ParameterValue="myPRT-2" ParameterKey=subnetNAME01,ParameterValue="subnet1-2" ParameterKey=SubnetCIDR1,ParameterValue="10.0.1.0/24" ParameterKey=subnetNAME02,ParameterValue="subnet2-2" ParameterKey=SubnetCIDR2,ParameterValue="10.0.2.0/24" ParameterKey=subnetNAME03,ParameterValue="subnet3-2" ParameterKey=SubnetCIDR3,ParameterValue="10.0.3.0/24"
 
 --capabilities CAPABILITY_NAMED_IAM
 
@@ -42,6 +42,9 @@ aws ec2 create-key-pair --key-name KeyPair01 --key-type rsa --query "KeyMaterial
 
 Empty bucket:
 aws s3 rm s3://csye6225.dev.chunjunhu.me --recursive
+
+Pressure Test:
+while ($true) {curl http://dev.chunjunhu.me/healthz}
 
 GITHUB:
 
