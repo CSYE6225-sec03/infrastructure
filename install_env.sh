@@ -2,6 +2,21 @@ echo "Start to install dependencies, current time is:"  `date`
 sudo yum -y update
 cd /home/ec2-user/
 
+
+
+
+cd /home/ec2-user
+sudo yum update
+sudo yum install ruby
+sudo yum install wget
+wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
+chmod +x ./install
+sudo ./install auto
+sudo service codedeploy-agent start
+sudo service codedeploy-agent status
+
+
+
 # Python dependencies
 # sudo yum -y install epel-release
 sudo yum install -y python3
