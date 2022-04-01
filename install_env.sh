@@ -7,7 +7,7 @@ cd /home/ec2-user/
 
 cd /home/ec2-user
 sudo yum update
-sudo yum install ruby
+sudo yum install ruby -y
 sudo yum install wget
 wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
 chmod +x ./install
