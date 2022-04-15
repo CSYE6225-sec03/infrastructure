@@ -1,7 +1,7 @@
 {
    "aws_access_key":"{{ env `aws_access_key_id` }}",
    "aws_secert_key":"{{ env `aws_secret_access_key` }}",
-   "aws_region":"us-east-2",
-   "subnet_id":"subnet-02a3b0ac042134bb0",
-   "source_ami":"ami-0c7478fd229861c57"
+   "aws_region":"us-east-1",
+   "subnet_id":"subnet-084c10e432983ed7e",
+   "source_ami":"ami-03ededff12e34e59e"
 }
